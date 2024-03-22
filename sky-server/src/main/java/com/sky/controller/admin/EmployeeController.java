@@ -14,6 +14,7 @@ import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/admin/employee")
+@Builder
 @Slf4j
 @Api(tags = "员工相关接口")
 public class EmployeeController {
@@ -79,15 +81,23 @@ public class EmployeeController {
 
     @ApiOperation(value = "新增员工")
     @PostMapping
-    public Result save(@RequestBody EmployeeDTO employeeDTO){
+    public Result save(@RequestBody EmployeeDTO employeeDTO) {
         employeeService.save(employeeDTO);
         return Result.success();
     }
+
     @ApiOperation(value = "员工分页查询")
     @GetMapping("/page")
-    public Result<PageResult> page(EmployeePageQueryDTO pageQueryDTO){
+    public Result<PageResult> page(EmployeePageQueryDTO pageQueryDTO) {
         PageResult pageResult = employeeService.pageQuery(pageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    @ApiOperation(value = "启用禁用员工")
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id) {
+        employeeService.startOrStop(status, id);
+        return Result.success();
     }
 
 }

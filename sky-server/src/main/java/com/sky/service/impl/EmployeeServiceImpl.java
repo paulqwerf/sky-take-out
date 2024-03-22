@@ -16,6 +16,7 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import lombok.Builder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.util.DigestUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -90,5 +92,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         long total = page.getTotal();
         return new PageResult(total,record);
     }
+
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .id(id)
+                .status(status).build();
+        employeeMapper.update(employee);
+
+    }
+
+
 
 }
