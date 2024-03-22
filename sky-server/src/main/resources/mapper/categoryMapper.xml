@@ -4,4 +4,26 @@
 <mapper namespace="com.sky.mapper.CategoryMapper">
 
 
+    <update id="update">
+        update sky_take_out.category
+        <set>
+            <if test="">
+
+            </if>
+        </set>
+        where id = #{id}
+
+    </update>
+    <select id="getPageQuery" resultType="com.sky.entity.Category">
+        select * from sky_take_out.category
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
 </mapper>
