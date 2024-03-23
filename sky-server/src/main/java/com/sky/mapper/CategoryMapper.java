@@ -15,7 +15,7 @@ public interface CategoryMapper {
             "#{type},#{name},#{sort},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})")
     void insert(Category category);
 
-    Page<Category> update(CategoryPageQueryDTO categoryPageQueryDTO);
+    void update(Category category);
 
 
     Page<Category> getPageQuery(CategoryPageQueryDTO categoryPageQueryDTO);

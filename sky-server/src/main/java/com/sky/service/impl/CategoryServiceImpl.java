@@ -45,4 +45,13 @@ public class CategoryServiceImpl implements CategoryService {
         long total = page.getTotal();
         return new PageResult(total,record);
     }
+
+    @Override
+    public void edit(CategoryDTO categoryDTO) {
+        Category category = new Category();
+        BeanUtils.copyProperties(categoryDTO,category);
+        category.setUpdateUser(BaseContext.getCurrentId());
+        category.setUpdateTime(LocalDateTime.now());
+        categoryMapper.update(category);
+    }
 }

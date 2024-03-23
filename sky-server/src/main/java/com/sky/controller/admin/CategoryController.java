@@ -37,5 +37,12 @@ public class CategoryController {
         return Result.success(pageResult);
     }
 
+    @PutMapping
+    @ApiOperation("编辑分类")
+    public Result edit(@RequestBody CategoryDTO categoryDTO){
+        categoryService.edit(categoryDTO);
+        return Result.success();
+    }
+
 
 }
