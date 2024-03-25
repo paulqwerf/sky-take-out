@@ -8,19 +8,19 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
+import com.sky.entity.Setmeal;
 import com.sky.exception.DeletionNotAllowedException;
-import com.sky.mapper.CategoryMapper;
-import com.sky.mapper.DishFlavorMapper;
-import com.sky.mapper.DishMapper;
-import com.sky.mapper.SetmealDishMapper;
+import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
+import io.swagger.models.auth.In;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +34,8 @@ public class DishServiceImpl implements DishService {
     private CategoryMapper categoryMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+    @Autowired
+    private SetmealMapper setmealMapper;
 
     @Override
     @Transactional
@@ -113,7 +115,6 @@ public class DishServiceImpl implements DishService {
         }
 
 
-
     }
 
     @Override
@@ -127,7 +128,26 @@ public class DishServiceImpl implements DishService {
     }
 
     @Override
-    public void startOrStop(Dish dish) {
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder()
+                .status(status)
+                .id(id)
+                .build();
         dishMapper.update(dish);
+        if (Objects.equals(status, StatusConstant.DISABLE)) {
+            List<Long> dishId = new ArrayList<>();
+            dishId.add(id);
+            List<Long> setmealIdByDishId = setmealDishMapper.getSetmealIdByDishId(dishId);
+            if (!setmealIdByDishId.isEmpty()) {
+                for (Long setmealId : setmealIdByDishId) {
+                    Setmeal setmeal = Setmeal.builder()
+                            .status(StatusConstant.DISABLE)
+                            .id(setmealId)
+                            .build();
+                    setmealMapper.update(setmeal);
+                }
+            }
+
+        }
     }
 }

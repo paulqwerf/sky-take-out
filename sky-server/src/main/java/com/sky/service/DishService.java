@@ -20,5 +20,5 @@ public interface DishService {
 
     DishVO getById(Long id);
 
-    void startOrStop(Dish dish);
+    void startOrStop(Integer status,Long id);
 }
