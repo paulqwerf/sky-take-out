@@ -9,4 +9,19 @@
                                       create_user, update_user, status)
         values (#{name},#{categoryId},#{price},#{image},#{description},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})
     </insert>
+    <select id="pageQuery" resultType="com.sky.vo.DishVO">
+        select dish.*,category.name as categoryName from sky_take_out.dish left join sky_take_out.category on dish.category_id = category.id
+        <where>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
 </mapper>
