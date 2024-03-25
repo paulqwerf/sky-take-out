@@ -125,4 +125,9 @@ public class DishServiceImpl implements DishService {
         dishVO.setFlavors(dishFlavors);
         return dishVO;
     }
+
+    @Override
+    public void startOrStop(Dish dish) {
+        dishMapper.update(dish);
+    }
 }
