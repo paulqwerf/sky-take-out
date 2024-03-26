@@ -24,16 +24,16 @@
         dish.category_id = category.id
         <where>
             <if test="categoryId != null">
-                and category_id = #{categoryId}
+                and dish.category_id = #{categoryId}
             </if>
             <if test="name != null and name != ''">
-                and name like concat('%',#{name},'%')
+                and dish.name like concat('%',#{name},'%')
             </if>
             <if test="status != null">
-                and status = #{status}
+                and dish.status = #{status}
             </if>
         </where>
-        order by update_time desc
+        order by dish.update_time desc
     </select>
 
 
