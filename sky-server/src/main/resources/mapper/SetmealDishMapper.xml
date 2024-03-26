@@ -4,12 +4,20 @@
 <mapper namespace="com.sky.mapper.SetmealDishMapper">
     <insert id="insert">
         insert into sky_take_out.setmeal_dish
-            (setmeal_id, dish_id, name, price, copies)VALUES
+        (setmeal_id, dish_id, name, price, copies)VALUES
         <foreach collection="setmealDishes" separator="," item="df">
             (#{df.setmealId},#{df.dishId},#{df.name},#{df.price},#{df.copies})
         </foreach>
 
     </insert>
+    <delete id="deleteBySetmealIds">
+        delete
+        from sky_take_out.setmeal_dish
+        where setmeal_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
 
 
     <select id="getSetmealIdByDishId" resultType="java.lang.Long">
@@ -20,23 +28,31 @@
             #{dishId}
         </foreach>
     </select>
+    <select id="getBySetmealIds" resultType="com.sky.entity.SetmealDish">
+        select *
+        from sky_take_out.setmeal_dish
+        where setmeal_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </select>
 
 
-<!--    <set>-->
-<!--        <if test="setmealId != null">-->
-<!--            setmeal_id = #{setmealId},-->
-<!--        </if>-->
-<!--        <if test="dishId != null">-->
-<!--            dish_id = #{dishId},-->
-<!--        </if>-->
-<!--        <if test="name != null">-->
-<!--            name = #{name},-->
-<!--        </if>-->
-<!--        <if test="price != null">-->
-<!--            price = #{price},-->
-<!--        </if>-->
-<!--        <if test="copies != null">-->
-<!--            copies = #{copies},-->
-<!--        </if>-->
-<!--    </set>-->
+    <!--    <set>-->
+    <!--        <if test="setmealId != null">-->
+    <!--            setmeal_id = #{setmealId},-->
+    <!--        </if>-->
+    <!--        <if test="dishId != null">-->
+    <!--            dish_id = #{dishId},-->
+    <!--        </if>-->
+    <!--        <if test="name != null">-->
+    <!--            name = #{name},-->
+    <!--        </if>-->
+    <!--        <if test="price != null">-->
+    <!--            price = #{price},-->
+    <!--        </if>-->
+    <!--        <if test="copies != null">-->
+    <!--            copies = #{copies},-->
+    <!--        </if>-->
+    <!--    </set>-->
 </mapper>

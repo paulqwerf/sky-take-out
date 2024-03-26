@@ -10,6 +10,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 @Mapper
 public interface SetmealMapper {
 
@@ -31,4 +33,6 @@ public interface SetmealMapper {
 
     @Select("select * from sky_take_out.setmeal where id = #{id}")
     Setmeal getById(Long id);
+
+    void deleteBetch(List<Long> ids);
 }

@@ -2,10 +2,13 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
@@ -20,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -94,6 +98,26 @@ public class SetmealServiceImpl implements SetmealService {
             }
             setmealDishMapper.insert(setmealDishes);
         }
+
+    }
+
+    @Override
+    public void deleteBetch(List<Long> ids) {
+        //查询套餐是否处于启售状态
+        for (Long id : ids) {
+            Setmeal setmeal = setmealMapper.getById(id);
+            if(Objects.equals(setmeal.getStatus(), StatusConstant.ENABLE)){
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
+            }
+        }
+        //查询是否要菜品绑定了套餐（通过关系表）
+        List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealIds(ids);
+        //根据id删除关系表
+        if(!setmealDishes.isEmpty()){
+            setmealDishMapper.deleteBySetmealIds(ids);
+        }
+        //删除套餐
+        setmealMapper.deleteBetch(ids);
 
     }
 }
