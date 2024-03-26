@@ -38,6 +38,7 @@ public class SetmealServiceImpl implements SetmealService {
     @Autowired
     private CategoryMapper categoryMapper;
 
+
     @Override
     public void save(SetmealDTO setmealDTO) {
         Setmeal setmeal = new Setmeal();
@@ -51,11 +52,6 @@ public class SetmealServiceImpl implements SetmealService {
             }
             setmealDishMapper.insert(setmealDishes);
         }
-
-
-
-
-
     }
 
     @Override
@@ -63,5 +59,21 @@ public class SetmealServiceImpl implements SetmealService {
         PageHelper.startPage(setmealPageQueryDTO.getPage(),setmealPageQueryDTO.getPageSize());
         Page<SetmealVO> page = setmealMapper.pageQuery(setmealPageQueryDTO);
         return new PageResult(page.getTotal(),page.getResult());
+    }
+
+    @Override
+    public SetmealVO getById(Long id) {
+        SetmealVO setmealVO = new SetmealVO();
+        //根据id查询套餐表的数据
+        Setmeal setmeal = setmealMapper.getById(id);
+        //复制到VO中
+        BeanUtils.copyProperties(setmeal,setmealVO);
+        //到分类表中根据id查询名字
+        String categoryName = categoryMapper.getBycategoryId(setmeal.getCategoryId());
+        setmealVO.setCategoryName(categoryName);
+        //到套餐菜品表中找到关系表导入到VO中
+        List<SetmealDish> setmealDishes = setmealDishMapper.getBySetmealId(id);
+        setmealVO.setSetmealDishes(setmealDishes);
+        return setmealVO;
     }
 }
