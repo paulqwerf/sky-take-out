@@ -25,4 +25,7 @@ public interface SetmealDishMapper {
     List<SetmealDish> getBySetmealIds(List<Long> ids);
 
     void deleteBySetmealIds(List<Long> ids);
+
+    @Select("select dish_id from sky_take_out.setmeal_dish where setmeal_id = #{setmealId}")
+    List<Long> getDishIdsBySetmealId(Long setmealId);
 }

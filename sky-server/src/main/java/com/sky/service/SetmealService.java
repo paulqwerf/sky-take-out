@@ -20,4 +20,6 @@ public interface SetmealService {
     void updateWithSetmealDish(SetmealDTO setmealDTO);
 
     void deleteBetch(List<Long> ids);
+
+    void startOrStop(Integer status, Long id);
 }

@@ -35,6 +35,12 @@
         </where>
         order by dish.update_time desc
     </select>
+    <select id="getStatusByids" resultType="java.lang.Integer">
+        select status from sky_take_out.dish where id in
+        <foreach collection="dishIds" separator="," item="dishId" open="(" close=")">
+            #{dishId}
+        </foreach>
+    </select>
 
 
     <update id="update">

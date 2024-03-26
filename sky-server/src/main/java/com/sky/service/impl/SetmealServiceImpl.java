@@ -6,9 +6,11 @@ import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
@@ -120,4 +122,45 @@ public class SetmealServiceImpl implements SetmealService {
         setmealMapper.deleteBetch(ids);
 
     }
+
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        if (Objects.equals(status,StatusConstant.DISABLE)) {
+            List<Long> dishIds = setmealDishMapper.getDishIdsBySetmealId(id);
+            List<Integer> statusList = dishMapper.getStatusByids(dishIds);
+            for (Integer statu : statusList) {
+                if(Objects.equals(statu,StatusConstant.DISABLE)){
+                    throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                }
+            }
+        }
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.update(setmeal);
+
+
+    }
+    //黑马答案代码：
+/*    public void startOrStop(Integer status, Long id) {
+        //起售套餐时，判断套餐内是否有停售菜品，有停售菜品提示"套餐内包含未启售菜品，无法启售"
+        if(Objects.equals(status, StatusConstant.ENABLE)){
+            //select a.* from dish a left join setmeal_dish b on a.id = b.dish_id where b.setmeal_id = ?
+            List<Dish> dishList = dishMapper.getBySetmealId(id);
+            if(dishList != null && !dishList.isEmpty()){
+                dishList.forEach(dish -> {
+                    if(StatusConstant.DISABLE.equals(dish.getStatus())){
+                        throw new SetmealEnableFailedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                    }
+                });
+            }
+        }
+
+        Setmeal setmeal = Setmeal.builder()
+                .id(id)
+                .status(status)
+                .build();
+        setmealMapper.update(setmeal);
+    }*/
 }
