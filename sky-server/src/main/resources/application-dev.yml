@@ -12,3 +12,7 @@ sky:
     access-key-id: LTAI5tGD8vXbz83yLrw3ZAH7
     access-key-secret: xdBYakBtxIpBsz7MTguTIEmtcFU26r
     bucket-name: web-framework0721
+
+  servlet:
+    max-file-size: 30MB
+    max-request-size: 30MB

@@ -2,7 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealDishMapper">
+    <insert id="insert">
+        insert into sky_take_out.setmeal_dish
+            (setmeal_id, dish_id, name, price, copies)VALUES
+        <foreach collection="setmealDishes" separator="," item="df">
+            (#{df.setmealId},#{df.dishId},#{df.name},#{df.price},#{df.copies})
+        </foreach>
 
+    </insert>
 
 
     <select id="getSetmealIdByDishId" resultType="java.lang.Long">
@@ -13,4 +20,23 @@
             #{dishId}
         </foreach>
     </select>
+
+
+<!--    <set>-->
+<!--        <if test="setmealId != null">-->
+<!--            setmeal_id = #{setmealId},-->
+<!--        </if>-->
+<!--        <if test="dishId != null">-->
+<!--            dish_id = #{dishId},-->
+<!--        </if>-->
+<!--        <if test="name != null">-->
+<!--            name = #{name},-->
+<!--        </if>-->
+<!--        <if test="price != null">-->
+<!--            price = #{price},-->
+<!--        </if>-->
+<!--        <if test="copies != null">-->
+<!--            copies = #{copies},-->
+<!--        </if>-->
+<!--    </set>-->
 </mapper>
