@@ -76,4 +76,24 @@ public class SetmealServiceImpl implements SetmealService {
         setmealVO.setSetmealDishes(setmealDishes);
         return setmealVO;
     }
+
+    @Override
+    public void updateWithSetmealDish(SetmealDTO setmealDTO) {
+        Setmeal setmeal = new Setmeal();
+        BeanUtils.copyProperties(setmealDTO,setmeal);
+        setmealMapper.update(setmeal);
+        List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
+        Long setmealId = setmealDTO.getId();
+        if(!setmealDishes.isEmpty()){
+            for (SetmealDish setmealDish : setmealDishes) {
+                setmealDish.setSetmealId(setmealId);
+            }
+            //判断原来关系表是否为空，若为空才删除
+            if(!setmealDishMapper.getBySetmealId(setmealId).isEmpty()){
+                setmealDishMapper.deleteBySetmealId(setmealId);
+            }
+            setmealDishMapper.insert(setmealDishes);
+        }
+
+    }
 }
