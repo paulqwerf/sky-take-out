@@ -16,3 +16,9 @@ sky:
   servlet:
     max-file-size: 30MB
     max-request-size: 30MB
+
+  redis:
+    host: 10.211.55.10
+    password: yzh1346as
+    database: 0
+    port: 6379
