@@ -45,6 +45,9 @@ public interface DishMapper {
 
     List<Integer> getStatusByids(List<Long> dishIds);
 
+
+    List<Dish> list(Dish dish);
+
     @Select("select * from sky_take_out.dish where id = #{id}")
     List<Dish> getBySetmealId(Long id);
 }

@@ -28,13 +28,16 @@ public class CommonController {
 
     @PostMapping("/upload")
     @ApiOperation("上传文件")
-    public Result<String> upload(MultipartFile file){
-        String originalFilename = file.getOriginalFilename();
-        assert originalFilename != null;
-        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String objectName = UUID.randomUUID().toString() + extension;
-
+    public Result<String> upload(MultipartFile file) {
         try {
+            //原始文件名
+            String originalFilename = file.getOriginalFilename();
+            //截取原始文件名的后缀
+            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            //构造新文件名称
+            String objectName = UUID.randomUUID().toString() + extension;
+
+            //文件的请求路径
             String filePath = aliOssUtil.upload(file.getBytes(), objectName);
             log.info(filePath);
             return Result.success(filePath);

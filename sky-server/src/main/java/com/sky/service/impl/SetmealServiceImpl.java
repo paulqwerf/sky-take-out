@@ -17,6 +17,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
@@ -149,6 +150,26 @@ public class SetmealServiceImpl implements SetmealService {
 
 
     }
+
+    /**
+     * 条件查询
+     * @param setmeal
+     * @return
+     */
+    public List<Setmeal> list(Setmeal setmeal) {
+        List<Setmeal> list = setmealMapper.list(setmeal);
+        return list;
+    }
+
+    /**
+     * 根据id查询菜品选项
+     * @param id
+     * @return
+     */
+    public List<DishItemVO> getDishItemById(Long id) {
+        return setmealMapper.getDishItemBySetmealId(id);
+    }
+}
     //黑马答案代码：
 /*    public void startOrStop(Integer status, Long id) {
         //起售套餐时，判断套餐内是否有停售菜品，有停售菜品提示"套餐内包含未启售菜品，无法启售"
@@ -170,4 +191,4 @@ public class SetmealServiceImpl implements SetmealService {
                 .build();
         setmealMapper.update(setmeal);
     }*/
-}
+

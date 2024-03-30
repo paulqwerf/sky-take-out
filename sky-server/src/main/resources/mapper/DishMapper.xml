@@ -42,6 +42,36 @@
         </foreach>
     </select>
 
+    <select id="list" resultType="com.sky.entity.Dish">
+        select * from sky_take_out.dish
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId != null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="price != null">
+                and price = #{price}
+            </if>
+            <if test="image != null">
+                and image = #{image}
+            </if>
+            <if test="description != null">
+                and description = #{description}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+            <if test="updateTime != null">
+                and update_time = #{updateTime}
+            </if>
+            <if test="updateUser != null">
+                and update_user = #{updateUser}
+            </if>
+        </where>
+    </select>
+
 
     <update id="update">
         update sky_take_out.dish
@@ -73,4 +103,6 @@
         </set>
         where id = #{id}
     </update>
+
+
 </mapper>
