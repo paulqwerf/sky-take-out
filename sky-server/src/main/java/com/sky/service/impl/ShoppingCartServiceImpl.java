@@ -79,11 +79,33 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void deleteShoppingCart() {
+    public void cleanShoppingCart() {
         Long currentId = BaseContext.getCurrentId();
         ShoppingCart shoppingCart = ShoppingCart.builder()
                 .userId(currentId)
                 .build();
         shoppingCartMapper.deleteAll(shoppingCart);
+    }
+
+    @Override
+    public void subShoppingCart(ShoppingCartDTO shoppingCartDTO) {
+        Long userId = BaseContext.getCurrentId();
+
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .userId(userId)
+                .build();
+        BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
+        List<ShoppingCart> list = shoppingCartMapper.list(shoppingCart);
+        if(list != null && !list.isEmpty()){
+            ShoppingCart cart = list.get(0);
+            int number = cart.getNumber();
+            if(number > 1){
+                cart.setNumber(number - 1);
+                shoppingCartMapper.updateNumberById(cart);
+            }else {
+                shoppingCartMapper.deleteById(cart.getId());
+//                shoppingCartMapper.delete(cart);
+            }
+        }
     }
 }

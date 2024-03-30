@@ -25,4 +25,9 @@ public interface ShoppingCartMapper {
 
     @Delete("delete from sky_take_out.shopping_cart where user_id = #{userId}")
     void deleteAll(ShoppingCart shoppingCart);
+
+    @Delete("delete from sky_take_out.shopping_cart where id = #{id}")
+    void deleteById(Long id);
+
+//    void delete(ShoppingCart cart);
 }
