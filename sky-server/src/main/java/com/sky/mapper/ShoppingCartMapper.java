@@ -29,5 +29,7 @@ public interface ShoppingCartMapper {
     @Delete("delete from sky_take_out.shopping_cart where id = #{id}")
     void deleteById(Long id);
 
+    void insertBetch(List<ShoppingCart> list);
+
 //    void delete(ShoppingCart cart);
 }
