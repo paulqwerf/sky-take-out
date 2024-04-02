@@ -32,7 +32,6 @@ public class OrderTask {
 
     @Scheduled(cron = "0 0 1 * * ?")
     public void processDeliverOrder(){
-        log.info("订单完成");
         LocalDateTime time = LocalDateTime.now().plusMinutes(-60);
         List<Orders> list = orderMapper.getByStatusAndOrderTimeLT(Orders.DELIVERY_IN_PROGRESS, time);
         if(list !=null && !list.isEmpty()){
