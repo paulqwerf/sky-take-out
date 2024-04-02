@@ -4,7 +4,9 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.AddressBook;
 import com.sky.entity.OrderDetail;
@@ -21,12 +23,14 @@ import com.sky.properties.WeChatProperties;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -176,4 +180,99 @@ public class OrderServiceImpl implements OrderService {
         orders.setCancelReason("用户取消");
         orderMapper.update(orders);
     }
+
+    @Override
+    public PageResult pageQuery4Admin(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(),ordersPageQueryDTO.getPageSize());
+        Page<Orders> page = orderMapper.pageQuery(ordersPageQueryDTO);
+        List<Orders> ordersList = page.getResult();
+        List<OrderVO> list = new ArrayList<>();
+        if(ordersList !=null && !ordersList.isEmpty()){
+            for (Orders orders : ordersList) {
+                OrderVO orderVO = new OrderVO();
+                List<OrderDetail> orderDetailList = orderDetailMapper.getByOrderId(orders.getId());
+                BeanUtils.copyProperties(orders,orderVO);
+
+                List<String> collect = orderDetailList.stream().map(s -> {
+                    return s.getName() + "*" + s.getNumber() + ";";
+                }).collect(Collectors.toList());
+                orderVO.setOrderDishes(String.join("",collect));
+
+                list.add(orderVO);
+            }
+        }
+        return new PageResult(page.getTotal(),list);
+
+    }
+
+    @Override
+    public OrderStatisticsVO statisticsOrder() {
+
+        Integer toBeConfirmed = orderMapper.countStatus(Orders.TO_BE_CONFIRMED);
+        Integer confirmed = orderMapper.countStatus(Orders.CONFIRMED);
+        Integer deliveryInProgress = orderMapper.countStatus(Orders.DELIVERY_IN_PROGRESS);
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        orderStatisticsVO.setConfirmed(confirmed);
+        orderStatisticsVO.setToBeConfirmed(toBeConfirmed);
+        orderStatisticsVO.setDeliveryInProgress(deliveryInProgress);
+
+        return orderStatisticsVO;
+    }
+
+    @Override
+    public void completeOrder(Long id) {
+        Orders ordersDB = orderMapper.getById(id);
+        if(ordersDB == null || !ordersDB.getStatus().equals(Orders.DELIVERY_IN_PROGRESS)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders orders = new Orders();
+        orders.setId(orders.getId());
+        orders.setStatus(Orders.COMPLETED);
+        orders.setDeliveryTime(LocalDateTime.now());
+        orderMapper.update(orders);
+
+    }
+
+    @Override
+    public void rejectOrder(OrdersRejectionDTO ordersRejectionDTO) {
+        Long orderId = ordersRejectionDTO.getId();
+        Orders ordersDB = orderMapper.getById(orderId);
+        if(ordersDB == null || ordersDB.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Integer payStatus = ordersDB.getPayStatus();
+        if(payStatus.equals(Orders.PAID)){
+            //微信退款
+        }
+        Orders orders = new Orders();
+        orders.setId(orderId);
+        orders.setStatus(Orders.CANCELLED);
+        orders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
+        orders.setCancelTime(LocalDateTime.now());
+        orderMapper.update(orders);
+    }
+
+    @Override
+    public void confirmOrder(OrdersConfirmDTO ordersConfirmDTO) {
+        Orders orders = Orders.builder()
+                .id(ordersConfirmDTO.getId())
+                .status(Orders.CONFIRMED)
+                .build();
+        orderMapper.update(orders);
+    }
+
+    @Override
+    public void deliverOrder(Long id) {
+        Orders ordersDB = orderMapper.getById(id);
+        if(ordersDB == null || ordersDB.getStatus().equals(Orders.CONFIRMED)){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders order = new Orders();
+        order.setId(id);
+        order.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        orderMapper.update(order);
+    }
+
+
 }
