@@ -31,4 +31,6 @@ public interface OrderService {
     void confirmOrder(OrdersConfirmDTO ordersConfirmDTO);
 
     void deliverOrder(Long id);
+
+    void reminder(Long id);
 }

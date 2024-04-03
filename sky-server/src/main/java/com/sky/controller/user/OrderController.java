@@ -72,4 +72,9 @@ public class OrderController {
         orderService.cancel(id);
         return Result.success();
     }
+    @GetMapping("/reminder/{id}")
+    public Result reminder(@PathVariable Long id){
+        orderService.reminder(id);
+        return Result.success();
+    }
 }
