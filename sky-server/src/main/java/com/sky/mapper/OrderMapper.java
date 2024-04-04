@@ -35,4 +35,6 @@ public interface OrderMapper {
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime time);
 
     Double getByMap(Map map);
+
+    Integer getOrderByMap(Map map);
 }
