@@ -19,5 +19,5 @@ public interface OrderDetailMapper {
     @Delete("delete from sky_take_out.order_detail where order_id = #{id}")
     void deleteByOrderId(Long id);
 
-    List<GoodsSalesDTO> getByMap(Map map);
+
 }

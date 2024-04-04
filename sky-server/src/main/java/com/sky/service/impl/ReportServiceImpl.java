@@ -147,7 +147,7 @@ public class ReportServiceImpl implements ReportService {
         map.put("end",endTime);
         map.put("status",Orders.COMPLETED);
 
-        List<GoodsSalesDTO> goodsSalesDTOList = orderDetailMapper.getByMap(map);
+        List<GoodsSalesDTO> goodsSalesDTOList = orderMapper.orderTop10(map);
         List<String> nameList = goodsSalesDTOList.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
         List<Integer> numberList = goodsSalesDTOList.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
 

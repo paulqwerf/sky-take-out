@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.github.pagehelper.Page;
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
 import org.apache.ibatis.annotations.Delete;
@@ -37,4 +38,6 @@ public interface OrderMapper {
     Double getByMap(Map map);
 
     Integer getOrderByMap(Map map);
+
+    List<GoodsSalesDTO> orderTop10(Map map);
 }
